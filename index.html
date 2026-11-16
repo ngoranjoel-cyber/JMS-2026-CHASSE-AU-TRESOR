@@ -141,13 +141,13 @@ else if(!(n>=1&&n<=7)){
  const t=T[k],r=document.documentElement.style;r.setProperty('--b1',t.b1);r.setProperty('--b2',t.b2);r.setProperty('--gc',t.gc);r.setProperty('--glow',t.g);r.setProperty('--rf',t.rf);r.setProperty('--lx',t.lx);
  let got=[];try{got=JSON.parse(localStorage.getItem('jmls26_'+k)||'[]')}catch(e){}
  const dots=[1,2,3,4,5,6,7].map(i=>`<i class="${got.includes(i)?'on':''}">${i}</i>`).join('');
- app.innerHTML=bg+net+head+`<div class="band"><div class="t">CHASSE AU TRÉSOR · ÉQUIPE ${t.n}</div><img class="rib" src="${RIB}" alt=""></div>
+ app.innerHTML=bg+net+head+`<div class="band"><div class="t">CHASSE AU TRÉSOR - ÉQUIPE ${t.n}</div><img class="rib" src="${RIB}" alt=""></div>
  <div class="dots">${dots}</div><div class="cnt">${got.length} / 7 expressions trouvées</div>
  <div class="list" style="display:${got.length?'block':'none'}">${got.slice().sort((a,b)=>a-b).map(i=>`<div><small>CACHETTE N° ${i}</small>« ${t.e[i-1]} »</div>`).join('')}</div>
  <div class="win" style="display:${got.length===7?'block':'none'}"><b>Bravo, les 7 sont trouvées !</b>Remettez les expressions dans l’ordre pour reconstituer votre phrase, puis présentez-la à l’animateur et au jury.</div>
  ${hintBlock(k,got)}
  <a class="tm" style="background:linear-gradient(180deg,#26406B,#16294B);color:#D9BC73" href="?v=p">← Changer d’équipe</a>
- <div class="foot">JOURNÉE MONDIALE DE LUTTE CONTRE LE SIDA · 1ER DÉCEMBRE 2026</div>`;}
+ <div class="foot">JOURNÉE MONDIALE DE LUTTE CONTRE LE SIDA - 1ER DÉCEMBRE 2026</div>`;}
 else{
  const t=T[k],r=document.documentElement.style;r.setProperty('--b1',t.b1);r.setProperty('--b2',t.b2);r.setProperty('--gc',t.gc);r.setProperty('--glow',t.g);r.setProperty('--rf',t.rf);r.setProperty('--lx',t.lx);
  const key='jmls26_'+k;let got=[];try{got=JSON.parse(localStorage.getItem(key)||'[]')}catch(e){}
@@ -168,7 +168,7 @@ else{
  <button class="btn dn" onclick="var l=document.getElementById('lst');l.style.display=l.style.display==='block'?'none':'block'">Voir mes expressions</button>
  <div class="list" id="lst">${got.slice().sort((a,b)=>a-b).map(i=>`<div><small>CACHETTE N° ${i}</small>« ${t.e[i-1]} »</div>`).join('')}</div>
  <button class="btn mt" onclick="if(confirm('Effacer les expressions trouvées sur ce téléphone ?')){try{localStorage.removeItem('${key}');localStorage.removeItem('${key}_h')}catch(e){};location.reload()}">Recommencer</button>
- <div class="foot">JOURNÉE MONDIALE DE LUTTE CONTRE LE SIDA · 1ER DÉCEMBRE 2026</div>`;
+ <div class="foot">JOURNÉE MONDIALE DE LUTTE CONTRE LE SIDA - 1ER DÉCEMBRE 2026</div>`;
 }
 }
 sync().then(main);
