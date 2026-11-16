@@ -74,7 +74,13 @@ const app=document.getElementById('app');
 const API='https://script.google.com/macros/s/AKfycbxgIb_IRRGte_innsXtjrEWr4O8aQM9psdV2k_5wzPi4vJt_ingYVLt8gLEsQa2wqoZrw/exec';
 const TEAMS=['rouge','bleue','verte','jaune'];
 const v=(q.get('v')||'').toLowerCase();
-function api(p){if(!API)return Promise.resolve(null);return fetch(API+'?'+new URLSearchParams(p)).then(r=>r.json()).catch(()=>null)}
+function rawApi(p){return fetch(API+'?'+new URLSearchParams(p)).then(r=>r.json())}
+function qGet(){try{return JSON.parse(localStorage.getItem('jms26_q')||'[]')}catch(e){return []}}
+function qSet(a){try{localStorage.setItem('jms26_q',JSON.stringify(a))}catch(e){}}
+function flushQ(){if(!API)return;const a=qGet();if(!a.length)return;qSet([]);a.forEach(p=>{rawApi(p).catch(()=>{const b=qGet();b.push(p);qSet(b)})})}
+function api(p){if(!API)return Promise.resolve(null);
+ return rawApi(p).then(r=>{if(p.action!=='reset')flushQ();return r}).catch(()=>{if(p.action==='log'||p.action==='hint'){const a=qGet();if(!a.some(x=>JSON.stringify(x)===JSON.stringify(p))){a.push(p);qSet(a)}}return null})}
+window.addEventListener('online',flushQ);
 function sync(){if(!API)return Promise.resolve();
  return Promise.race([api({action:'status'}),new Promise(res=>setTimeout(()=>res(null),1800))]).then(r=>{
   if(r&&typeof r.v==='number'){let lv=null;try{lv=localStorage.getItem('jms26_v')}catch(e){}
@@ -141,13 +147,13 @@ else if(!(n>=1&&n<=7)){
  const t=T[k],r=document.documentElement.style;r.setProperty('--b1',t.b1);r.setProperty('--b2',t.b2);r.setProperty('--gc',t.gc);r.setProperty('--glow',t.g);r.setProperty('--rf',t.rf);r.setProperty('--lx',t.lx);
  let got=[];try{got=JSON.parse(localStorage.getItem('jmls26_'+k)||'[]')}catch(e){}
  const dots=[1,2,3,4,5,6,7].map(i=>`<i class="${got.includes(i)?'on':''}">${i}</i>`).join('');
- app.innerHTML=bg+net+head+`<div class="band"><div class="t">CHASSE AU TRÉSOR - ÉQUIPE ${t.n}</div><img class="rib" src="${RIB}" alt=""></div>
+ app.innerHTML=bg+net+head+`<div class="band"><div class="t">CHASSE AU TRÉSOR · ÉQUIPE ${t.n}</div><img class="rib" src="${RIB}" alt=""></div>
  <div class="dots">${dots}</div><div class="cnt">${got.length} / 7 expressions trouvées</div>
  <div class="list" style="display:${got.length?'block':'none'}">${got.slice().sort((a,b)=>a-b).map(i=>`<div><small>CACHETTE N° ${i}</small>« ${t.e[i-1]} »</div>`).join('')}</div>
  <div class="win" style="display:${got.length===7?'block':'none'}"><b>Bravo, les 7 sont trouvées !</b>Remettez les expressions dans l’ordre pour reconstituer votre phrase, puis présentez-la à l’animateur et au jury.</div>
  ${hintBlock(k,got)}
  <a class="tm" style="background:linear-gradient(180deg,#26406B,#16294B);color:#D9BC73" href="?v=p">← Changer d’équipe</a>
- <div class="foot">JOURNÉE MONDIALE DE LUTTE CONTRE LE SIDA - 1ER DÉCEMBRE 2026</div>`;}
+ <div class="foot">JOURNÉE MONDIALE DE LUTTE CONTRE LE SIDA · 1ER DÉCEMBRE 2026</div>`;}
 else{
  const t=T[k],r=document.documentElement.style;r.setProperty('--b1',t.b1);r.setProperty('--b2',t.b2);r.setProperty('--gc',t.gc);r.setProperty('--glow',t.g);r.setProperty('--rf',t.rf);r.setProperty('--lx',t.lx);
  const key='jmls26_'+k;let got=[];try{got=JSON.parse(localStorage.getItem(key)||'[]')}catch(e){}
@@ -168,8 +174,9 @@ else{
  <button class="btn dn" onclick="var l=document.getElementById('lst');l.style.display=l.style.display==='block'?'none':'block'">Voir mes expressions</button>
  <div class="list" id="lst">${got.slice().sort((a,b)=>a-b).map(i=>`<div><small>CACHETTE N° ${i}</small>« ${t.e[i-1]} »</div>`).join('')}</div>
  <button class="btn mt" onclick="if(confirm('Effacer les expressions trouvées sur ce téléphone ?')){try{localStorage.removeItem('${key}');localStorage.removeItem('${key}_h')}catch(e){};location.reload()}">Recommencer</button>
- <div class="foot">JOURNÉE MONDIALE DE LUTTE CONTRE LE SIDA - 1ER DÉCEMBRE 2026</div>`;
+ <div class="foot">JOURNÉE MONDIALE DE LUTTE CONTRE LE SIDA · 1ER DÉCEMBRE 2026</div>`;
 }
 }
 sync().then(main);
+if('serviceWorker' in navigator&&location.protocol==='https:'||location.hostname==='localhost'){window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}))}
 </script></body></html>
